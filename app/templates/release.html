@@ -45,8 +45,6 @@
 			</nav>
 		</div>
 		<!--menu end-->
-		<a href="login.html" id="login" target="_blank">登录</a>
-		<a href="register.html" id="register" target="_blank">注册</a>
 		<!--mnav begin-->
 		<div id="mnav">
 			<h2><a href="index.html" class="mlogo">皮爷の博客</a><span class="navicon"></span></h2>
@@ -68,6 +66,13 @@
 				<dt class="list_dt"> <a href="about.html">关于我</a> </dt>
 			</dl>
 		</div>
+		{% if not params.user %}
+		  <a href="/login" id="login" target="_blank">登录</a>
+		  <a href="/register" id="register" target="_blank">注册</a>
+		{% else %}
+		  <a id="login">欢迎:{{params.user.uname}}</a>
+		  <a id="register" href="/logout">退出</a>
+		{% endif %}
 		<!--mnav end-->
 	</header>
 	<div class="pagebg re"></div>
@@ -115,6 +120,12 @@
 				<p>
 					<input id="id_article" name="article" type="hidden" value="1">
 					<input name="submit" type="submit" id="submit" tabindex="5" value="提交" class="button" />
+					<select style="float:right;margin-right:16px;" name="recommend">
+						<option value="1">普通文章</option>
+						{% for reco in params.recommends %}
+							<option value="{{reco.id}}">{{reco.reco_type}}</option>
+						{% endfor %}
+					</select>
 				</p>
 				<br>
 			</form>

@@ -3,6 +3,8 @@
 """
 import os
 
+from sqlalchemy import func
+
 from . import main
 from flask import render_template, session, request, redirect
 
@@ -18,6 +20,15 @@ def index_views():
     # 读取Category中的所有内容并发送到index.html显示
     categories = Category.query.all()
     # 判断是否有登录的用户(判断session中是否有id和loginname)
+    mostlike = db.session.query(Voke.topic_id).group_by('topic_id').order_by(func.count('user_id').desc()).all()
+    liketopics = []
+    for ml in mostlike:
+        liketop = Topic.query.filter_by(id=ml[0]).first()
+        liketopics.append(liketop)
+
+    spec_reco = Topic.query.filter_by(recommend_id=3).order_by(Topic.id.desc()).all()
+    reco = Topic.query.filter_by(recommend_id=2).order_by(Topic.id.desc()).all()
+
     if 'id' in session and 'loginname' in session:
         id = session['id']
         user = User.query.filter_by(ID=id).first()
@@ -37,6 +48,7 @@ def release_views():
                 categories = Category.query.all()
                 # 2.查询BlogType的所有的信息
                 blogTypes = BlogType.query.all();
+                recommends = Recommend.query.filter(Recommend.id>1).all()
                 return render_template("release.html",params=locals())
         return redirect('/')
     else:
@@ -52,6 +64,9 @@ def release_views():
         topic.content = request.form['content']
         # 从session中获取id为Topic.user_id赋值
         topic.user_id = session['id']
+        # 获取是否推荐(recommend)为Topic.recommend_id赋值
+        topic.recommend_id = request.form['recommend']
+
         # 获取系统时间为Topic.pub_date赋值
         topic.pub_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         # 判断是否有上传图片,处理上传图片,为Topic.images赋值
@@ -129,7 +144,30 @@ def info_views():
 
 @main.route("/list")
 def list_views():
-    return render_template('list.html',params=locals())
+    categories = Category.query.all()
+    mostlike = db.session.query(Voke.topic_id).group_by('topic_id').order_by(func.count('user_id').desc()).all()
+    liketopics = []
+    if request.args.get('id'):
+        cate_id = request.args.get('id')
+        topics = Topic.query.filter_by(category_id=cate_id).all()
+        for ml in mostlike:
+            liketop = Topic.query.filter_by(id=ml[0], category_id=cate_id).first()
+            liketopics.append(liketop)
+        spec_reco = Topic.query.filter_by(recommend_id=3,category_id=cate_id).order_by(Topic.id.desc()).all()
+        reco = Topic.query.filter_by(recommend_id=2,category_id=cate_id).order_by(Topic.id.desc()).all()
+    else:
+        topics = Topic.query.limit(15).all()
+        for ml in mostlike:
+            liketop = Topic.query.filter_by(id=ml[0]).first()
+            liketopics.append(liketop)
+        spec_reco = Topic.query.filter_by(recommend_id=3).order_by(Topic.id.desc()).all()
+        reco = Topic.query.filter_by(recommend_id=2).order_by(Topic.id.desc()).all()
+
+    if 'id' in session and 'loginname' in session:
+        id = session['id']
+        user = User.query.filter_by(ID=id).first()
+
+    return render_template('list.html', params=locals())
 
 @main.route("/time")
 def time_views():
@@ -138,7 +176,13 @@ def time_views():
 
 @main.route("/photo")
 def photo_views():
+    topics = Topic.query.limit(15).all()
+    # 读取Category中的所有内容并发送到index.html显示
     categories = Category.query.all()
+    # 判断是否有登录的用户(判断session中是否有id和loginname)
+    if 'id' in session and 'loginname' in session:
+        id = session['id']
+        user = User.query.filter_by(ID=id).first()
     return render_template('photo.html', params=locals())
 
 

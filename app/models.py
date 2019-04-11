@@ -12,6 +12,12 @@ class BlogType(db.Model):
     type_name = db.Column(db.String(20), nullable=False)
     topics = db.relationship('Topic', backref='blogType', lazy='dynamic')
 
+class Recommend(db.Model):
+    __tablename__ = "recommend"
+    id = db.Column(db.Integer, primary_key=True)
+    reco_type = db.Column(db.String(20), nullable=False)
+    topics = db.relationship('Topic', backref='recommend', lazy='dynamic')
+
 class User(db.Model):
     __tablename__ = "user"
     ID = db.Column(db.Integer, primary_key=True)
@@ -45,6 +51,7 @@ class Topic(db.Model):
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.ID'))
     replies = db.relationship('Reply', backref='topic', lazy='dynamic')
+    recommend_id = db.Column(db.Integer, db.ForeignKey('recommend.id'))
 
 class Reply(db.Model):
     __tablename__ = 'reply'
@@ -54,9 +61,8 @@ class Reply(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.ID'))
     topic_id = db.Column(db.Integer, db.ForeignKey('topic.id'))
 
-voke = db.Table(
-    'voke',
-    db.Column('id', db.Integer, primary_key=True),
-    db.Column('user_id', db.Integer, db.ForeignKey('user.ID')),
-    db.Column('topic_id', db.Integer, db.ForeignKey('topic.id'))
-)
+class Voke(db.Model):
+    __tablename__ = "voke"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.ID'))
+    topic_id = db.Column(db.Integer, db.ForeignKey('topic.id'))
