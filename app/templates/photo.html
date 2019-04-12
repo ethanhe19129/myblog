@@ -17,59 +17,25 @@
 
     <div class="share">
       <ul>
+          {% for topic in params.topics %}
         <li>
-          <div class="shareli"><a href="#" target="_blank"> <i><img src="/static/images/toppic01.jpg"></i>
-              <h2><b>python中打开TXT文件报错!</b></h2>
-              <span>喜欢 | 190</span>
+          <div class="shareli"><a href="/info?id={{topic.id}}" target="_blank"> <i><img src="/static/{{topic.images}}"></i>
+              <h2><b>{{topic.title}}</b></h2>
+              <span>喜欢 | {{topic.voke_users.count()}}</span>
             </a></div>
         </li>
-        <li>
-          <div class="shareli"><a href="#" target="_blank"> <i><img src="/static/images/toppic02.jpg"></i>
-              <h2><b>Python基础学习总结（一）</b></h2>
-              <span>喜欢 | 190</span>
-            </a></div>
-        </li>
-        <li>
-          <div class="shareli"><a href="#" target="_blank"> <i><img src="/static/images/banner01.jpg"></i>
-              <h2><b>Sublime text3作为Python的IDE不能正常使用input和raw_input</b></h2>
-              <span>喜欢 | 190</span>
-            </a> </div>
-        </li>
-        <li>
-          <div class="shareli"><a href="#" target="_blank"> <i><img src="/static/images/a.jpg"></i>
-              <h2><b>python学习网址以及笔记</b></h2>
-              <span>喜欢 | 190</span>
-            </a> </div>
-        </li>
-        <li>
-          <div class="shareli"><a href="#" target="_blank"> <i><img src="/static/images/b.jpg"></i>
-              <h2><b>linux升级py3,安装pip,svn</b></h2>
-              <span>喜欢 | 190</span>
-            </a> </div>
-        </li>
-        <li>
-          <div class="shareli"><a href="#" target="_blank"> <i><img src="/static/images/banner02.jpg"></i>
-              <h2><b>Python基础概念_2_基础概念</b></h2>
-              <span>喜欢 | 190</span>
-            </a> </div>
-        </li>
-        <li>
-          <div class="shareli"><a href="#" target="_blank"> <i><img src="/static/images/c.jpg"></i>
-              <h2><b>python环境安装和在eclipse中插件的使用!</b></h2>
-              <span>喜欢 | 190</span>
-            </a> </div>
-        </li>
-        <li>
-          <div class="shareli"><a href="#" target="_blank"> <i><img src="/static/images/banner02.jpg"></i>
-              <h2><b>python初步实现word2vec</b></h2>
-              <span>喜欢 | 190</span>
-            </a> </div>
-        </li>
+          {% endfor %}
       </ul>
     </div>
 
-    <div class="pagelist"><a title="Total record">&nbsp;<b>上一页</b> </a>&nbsp;&nbsp;&nbsp;<b>1</b>&nbsp;<a href="#">2</a>&nbsp;<a
-        href="#">下一页</a>&nbsp;<a href="#">尾页</a></div>
+   <div class="pagelist">
+       <a title="Total record" href="/photo?page={{params.prePage}}">&nbsp;<b>上一页</b></a>&nbsp;&nbsp;&nbsp;
+    {% for i in range(1,params.lastPage+1) %}
+       <a href="/photo?page={{i}}"><b>{{i}}</b></a>&nbsp;
+    {% endfor %}
+       <a href="/photo?page={{params.nextPage}}">下一页</a>&nbsp;
+       <a href="/photo?page={{params.lastPage}}">尾页</a>
+   </div>
 
 
   </div>

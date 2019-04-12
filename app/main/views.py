@@ -4,6 +4,7 @@
 import json
 import os
 
+import math
 from sqlalchemy import func
 
 from . import main
@@ -187,8 +188,6 @@ def info_views():
             return redirect(request.headers['referer'])
         return redirect('/')
 
-
-
 @main.route("/list")
 def list_views():
     categories = Category.query.all()
@@ -227,13 +226,34 @@ def time_views():
 
 @main.route("/photo")
 def photo_views():
-    topics = Topic.query.limit(15).all()
     # 读取Category中的所有内容并发送到index.html显示
     categories = Category.query.all()
     # 判断是否有登录的用户(判断session中是否有id和loginname)
     if 'id' in session and 'loginname' in session:
         id = session['id']
         user = User.query.filter_by(ID=id).first()
+    #分页显示
+    #一页8张图
+    pageSize = 8
+    #获取页数默认为1
+    page = int(request.args.get('page', 1))
+    #偏移量
+    ost = (page - 1) * pageSize
+    #当前页所要展示的主题,过滤掉不带图的
+    topics = db.session.query(Topic).filter(Topic.images!=None).offset(ost).limit(pageSize).all()
+    #获取要展示博客总数
+    totalCount = db.session.query(Topic).filter(Topic.images!=None).count()
+    #获取最后一页的页数
+    lastPage = math.ceil(totalCount / pageSize)
+    #设置默认前一页是1
+    prePage = 1
+    if page > 1:
+        prePage = page - 1
+        # 计算下一页
+        # 通过page计算下一页,并保存在变量nextPage中
+    nextPage = lastPage
+    if page < lastPage:
+        nextPage = page + 1
     return render_template('photo.html', params=locals())
 
 

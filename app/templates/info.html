@@ -90,7 +90,7 @@
 			<div class="nextinfo">
 				<p>
 					{% if params.prevTopic %}
-					上一篇：<a href="/list?id={{params.prevTopic.id}}">{{params.prevTopic.title}}</a></p>
+					上一篇：<a href="/info?id={{params.prevTopic.id}}">{{params.prevTopic.title}}</a></p>
 				{% else %}
 				<p><a href="/list">返回列表</a>
 				{% endif %}
@@ -98,7 +98,7 @@
 				<p>
 					{% if params.nextTopic %}
 					下一篇：
-					<a href="/list?id={{params.nextTopic.id}}">{{params.nextTopic.title}}</a></p>
+					<a href="/info?id={{params.nextTopic.id}}">{{params.nextTopic.title}}</a></p>
 				{% else %}
 				<p><a href="/list">返回列表</a>
 				{% endif %}
