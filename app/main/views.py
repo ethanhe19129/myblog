@@ -1,6 +1,7 @@
 """
 只处理与主题相关的路由和视图
 """
+import json
 import os
 
 from sqlalchemy import func
@@ -132,6 +133,7 @@ def logout_views():
 @main.route("/info", methods=['GET', 'POST'])
 def info_views():
     if request.method == "GET":
+        categories = Category.query.all()
         id = request.args.get('id')
         topic = Topic.query.filter_by(id=id).first()
         topic.read_num += 1
@@ -140,7 +142,28 @@ def info_views():
         nextTopic = Topic.query.filter(Topic.id>id).first()
         if 'id' in session and 'loginname' in session:
             user = User.query.filter_by(ID=session['id']).first()
+        if request.args.get('like'):
+            voke = Voke()
+            voke.topic_id = id
+            voke.user_id = session['id']
+            db.session.add(voke)
+            db.session.commit()
+            likes = Voke.query.filter_by(topic_id=id).count()
         return render_template("info.html", params=locals())
+
+# @main.route('/marklike')
+# def marklike_views():
+#     topic_id = request.args.get('topic_id')
+#     voke = Voke()
+#     voke.topic_id = topic_id
+#     voke.user_id = session['id']
+#     db.session.add(voke)
+#     db.session.commit()
+#     likes = Voke.query.filter_by(topic_id=topic_id).count()
+#     dic = {
+#         "likenum":likes
+#     }
+#     return json.dumps(dic)
 
 @main.route("/list")
 def list_views():

@@ -16,58 +16,45 @@
 	<script src="/static/js/wangEditor.js"></script>
 	<script src="/static/js/common.js"></script>
 	<script src="/static/js/xcConfirm.js"></script>
+	<script src="/static/js/jquery-1.11.3.js"></script>
+	<script src="/static/js/info.js"></script>
 </head>
 
 <body>
-	<header id="header">
-		<!--menu begin-->
-		<div class="menu">
-			<nav class="nav" id="topnav">
-				<h1 class="logo"><a href="index.html">皮爷の博客</a></h1>
-				<li><a href="index.html">网站首页</a> </li>
-				<li><a href="list.html">文章列表</a>
-					<ul class="sub-nav">
-						<li><a href="list.html">Python</a></li>
-						<li><a href="list.html">python Web</a></li>
-						<li><a href="list.html">爬虫</a></li>
-						<li><a href="list.html">人工智能</a></li>
-						<li><a href="list.html">JS实例索引</a></li>
-					</ul>
-				</li>
-				<li><a href="photo.html">我的相册</a>
-				</li>
-				<li><a href="time.html">时间轴</a> </li>
-				<li><a href="gbook.html">留言</a> </li>
-				<li><a href="about.html">关于我</a> </li>
-				<li><a href="release.html">发表博客</a></li>
-			</nav>
-		</div>
-		<!--menu end-->
-		<a href="login.html" id="login" target="_blank">登录</a>
-    	<a href="register.html" id="register" target="_blank">注册</a>
-		<!--mnav begin-->
-		<div id="mnav">
-			<h2><a href="index.html" class="mlogo">皮爷の博客</a><span class="navicon"></span></h2>
-			<dl class="list_dl">
-				<dt class="list_dt"> <a href="index.html">网站首页</a> </dt>
-				<dt class="list_dt"> <a href="#">文章列表</a> </dt>
-				<dd class="list_dd">
-					<ul>
-						<li><a href="list.html">Python</a></li>
-						<li><a href="list.html">python Web</a></li>
-						<li><a href="list.html">爬虫</a></li>
-						<li><a href="list.html">人工智能</a></li>
-						<li><a href="list.html">JS实例索引</a></li>
-					</ul>
-				</dd>
-				<dt class="list_dt"> <a href="photo.html">我的相册</a> </dt>
-				<dt class="list_dt"> <a href="time.html">时间轴</a> </dt>
-				<dt class="list_dt"> <a href="gbook.html">留言</a> </dt>
-				<dt class="list_dt"> <a href="about.html">关于我</a> </dt>
-			</dl>
-		</div>
-		<!--mnav end-->
-	</header>
+	 <header id="header">
+    <!--menu begin-->
+    <div class="menu">
+      <nav class="nav" id="topnav">
+        <h1 class="logo"><a href="/index">个人博客</a></h1>
+        <li><a href="/index">网站首页</a> </li>
+        <li><a href="/list">文章列表</a>
+          <ul class="sub-nav">
+            {% for cate in params.categories %}
+              <li>
+                <a href="/list?id={{cate.id}}">
+                  {{cate.cate_name}}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </li>
+        <li><a href="/photo">我的相册</a>
+        </li>
+        <li><a href="/time">时间轴</a> </li>
+        <li><a href="/gbook">留言</a> </li>
+        <li><a href="/about">关于我</a> </li>
+        <li><a href="/release">发表博客</a></li>
+      </nav>
+    </div>
+    {% if not params.user %}
+      <a href="/login" id="login" target="_blank">登录</a>
+      <a href="/register" id="register" target="_blank">注册</a>
+    {% else %}
+      <a id="login">欢迎:{{params.user.uname}}</a>
+      <a id="register" href="/logout">退出</a>
+    {% endif %}
+    <!--menu end-->
+  </header>
 
 
 	<article>
@@ -86,18 +73,16 @@
 						<li class="like">{{params.topic.voke_users.count()}}</li>
 					</ul>
 				</div>
-				<div class="tags"><a href="#" target="_blank">{{params.topic.blogType.type_name}}</a> &nbsp; <a href="#" target="_blank">小世界</a></div>
-				<div class="news_about"><strong>简介</strong>web.py 是一个Python 的web 框架，它简单而且功能强大。web.py
-					是公开的，无论用于什么用途都是没有限制的。而且相当的小巧，应当归属于轻量级的web 框架。但这并不影响web.py 的强大，而且使用起来很简单、很直接。</div>
+				<div class="tags"><a href="#" target="_blank">{{params.topic.blogType.type_name}}</a></div>
 				<div class="news_con">
 					{{params.topic.content}}
 				</div>
 			</div>
 			<div class="share">
 				<p class="diggit">
-					<a href="#">
+					<a href="/info?id={{params.topic.id}}&like=1">
 						很赞哦！ 
-					</a>(<b id="diggnum">13</b>)
+					</a>(<b id="diggnum">{{params.likes}}</b>)
 				</p>
 				<p class="dasbox"><a href="#" class="dashang" title="打赏，支持一下">打赏本站</a></p>
 				<div class="hide_box"></div>
