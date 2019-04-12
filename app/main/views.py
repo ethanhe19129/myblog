@@ -128,37 +128,60 @@ def logout_views():
     if 'id' in session or 'loginname' in session:
         del session['id']
         del session['loginname']
-    return redirect("/")
+    if request.headers['referer']:
+        return redirect(request.headers['referer'])
+    return redirect('/')
 
 @main.route("/info", methods=['GET', 'POST'])
 def info_views():
     if request.method == "GET":
+        #查询技术种类
         categories = Category.query.all()
         id = request.args.get('id')
+        # 获取当前主题
         topic = Topic.query.filter_by(id=id).first()
+        #获取所有技术种类下的主题
         topics = Topic.query.filter_by(category_id=topic.category_id).all()
+        #获取点赞量高的topid
         mostlike = db.session.query(Voke.topic_id).group_by('topic_id').order_by(func.count('user_id').desc()).all()
         liketopics = []
         for ml in mostlike:
             liketop = Topic.query.filter_by(id=ml[0], category_id=topic.category_id).first()
             liketopics.append(liketop)
+        #特别推荐博客
         spec_reco = Topic.query.filter_by(recommend_id=3,category_id=topic.category_id).order_by(Topic.id.desc()).all()
+        #推荐博客
         reco = Topic.query.filter_by(recommend_id=2,category_id=topic.category_id).order_by(Topic.id.desc()).all()
-
+        #打开页面增加一次阅读量
         topic.read_num += 1
         db.session.add(topic)
+        #显示前一页博客
         prevTopic = Topic.query.filter(Topic.id<id).order_by(Topic.id.desc()).first()
+        # 显示后一页博客
         nextTopic = Topic.query.filter(Topic.id>id).first()
+        #判断是否登录
         if 'id' in session and 'loginname' in session:
             user = User.query.filter_by(ID=session['id']).first()
+        #点赞请求
         if request.args.get('like'):
             voke = Voke()
             voke.topic_id = id
             voke.user_id = session['id']
             db.session.add(voke)
             db.session.commit()
-            likes = Voke.query.filter_by(topic_id=id).count()
+        likes = Voke.query.filter_by(topic_id=id).count()
         return render_template("info.html", params=locals())
+    else:
+        # 增加评论
+        reply = Reply()
+        reply.user_id = session['id']
+        reply.topic_id = request.form.get('topicID')
+        reply.content = request.form.get('comment')
+        reply.reply_time = datetime.datetime.now().strftime('%Y-%m-%d')
+        reply.id = 10
+
+        db.session.add(reply)
+        return redirect('/')
 
 
 

@@ -55,7 +55,7 @@ class Topic(db.Model):
 
 class Reply(db.Model):
     __tablename__ = 'reply'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     content = db.Column(db.Text, nullable=False)
     reply_time = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.ID'))

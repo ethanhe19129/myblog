@@ -112,7 +112,7 @@
 
 						<div class="l_box f_l" style="padding:20px;">
 							<div class="commentstitle">
-								<h3 id="comments">到现在<span class="commentsnumber">有30条评论</span></h3>
+								<h3 id="comments">到现在<span class="commentsnumber">有{{params.topic.replies.count()}}条评论</span></h3>
 							</div>
 							<ol class="commentlist">
 								<!--先遍历父级评论-->
@@ -193,17 +193,22 @@
 									</div>
 								</li>
 							</ol>
+							{% if params.user %}
 							<div id="commentform">
-								<h3 id="respond">在这添加你的留言！</h3>
-								<form action="#" method="post">
-									<dir id="editor"></dir>
+								<h3 id="respond">在这添加你的评论！</h3>
+								<form action="/info" method="post">
+									<textarea style="margin:8px 0 0 12px" name="comment" cols="65" rows="10"></textarea>
 									<br>
 									<p>
 										<input id="id_article" name="article" type="hidden" value="1">
+										<input type="hidden" name="topicID" value="{{params.topic.id}}">
 										<input name="submit" type="submit" id="submit" tabindex="5" value="提交" class="button" />
 									</p>
 								</form>
 							</div>
+							{% else%}
+								<a href="/login">登录后才可以发表评论</a>
+							{% endif %}
 						</div>
 
 					</div>
