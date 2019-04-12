@@ -142,6 +142,10 @@ def info_views():
         topic = Topic.query.filter_by(id=id).first()
         #获取所有技术种类下的主题
         topics = Topic.query.filter_by(category_id=topic.category_id).all()
+        try:
+            replies = Reply.query.filter_by(topic_id=id).order_by(Reply.id.desc()).all()
+        except AttributeError:
+            replies = None
         #获取点赞量高的topid
         mostlike = db.session.query(Voke.topic_id).group_by('topic_id').order_by(func.count('user_id').desc()).all()
         liketopics = []
@@ -177,10 +181,10 @@ def info_views():
         reply.user_id = session['id']
         reply.topic_id = request.form.get('topicID')
         reply.content = request.form.get('comment')
-        reply.reply_time = datetime.datetime.now().strftime('%Y-%m-%d')
-        reply.id = 10
-
+        reply.reply_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         db.session.add(reply)
+        if request.headers['referer']:
+            return redirect(request.headers['referer'])
         return redirect('/')
 
 
