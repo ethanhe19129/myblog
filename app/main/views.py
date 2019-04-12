@@ -136,6 +136,15 @@ def info_views():
         categories = Category.query.all()
         id = request.args.get('id')
         topic = Topic.query.filter_by(id=id).first()
+        topics = Topic.query.filter_by(category_id=topic.category_id).all()
+        mostlike = db.session.query(Voke.topic_id).group_by('topic_id').order_by(func.count('user_id').desc()).all()
+        liketopics = []
+        for ml in mostlike:
+            liketop = Topic.query.filter_by(id=ml[0], category_id=topic.category_id).first()
+            liketopics.append(liketop)
+        spec_reco = Topic.query.filter_by(recommend_id=3,category_id=topic.category_id).order_by(Topic.id.desc()).all()
+        reco = Topic.query.filter_by(recommend_id=2,category_id=topic.category_id).order_by(Topic.id.desc()).all()
+
         topic.read_num += 1
         db.session.add(topic)
         prevTopic = Topic.query.filter(Topic.id<id).order_by(Topic.id.desc()).first()
@@ -151,33 +160,25 @@ def info_views():
             likes = Voke.query.filter_by(topic_id=id).count()
         return render_template("info.html", params=locals())
 
-# @main.route('/marklike')
-# def marklike_views():
-#     topic_id = request.args.get('topic_id')
-#     voke = Voke()
-#     voke.topic_id = topic_id
-#     voke.user_id = session['id']
-#     db.session.add(voke)
-#     db.session.commit()
-#     likes = Voke.query.filter_by(topic_id=topic_id).count()
-#     dic = {
-#         "likenum":likes
-#     }
-#     return json.dumps(dic)
+
 
 @main.route("/list")
 def list_views():
     categories = Category.query.all()
+    #获取点赞较多的博客id倒序排列
     mostlike = db.session.query(Voke.topic_id).group_by('topic_id').order_by(func.count('user_id').desc()).all()
     liketopics = []
+    #如果是分类点击进入则分类别显示
     if request.args.get('id'):
         cate_id = request.args.get('id')
         topics = Topic.query.filter_by(category_id=cate_id).all()
+        #list打包封装较高点赞博客
         for ml in mostlike:
             liketop = Topic.query.filter_by(id=ml[0], category_id=cate_id).first()
             liketopics.append(liketop)
         spec_reco = Topic.query.filter_by(recommend_id=3,category_id=cate_id).order_by(Topic.id.desc()).all()
         reco = Topic.query.filter_by(recommend_id=2,category_id=cate_id).order_by(Topic.id.desc()).all()
+    #如果直接文章列表进入则不分类
     else:
         topics = Topic.query.limit(15).all()
         for ml in mostlike:
