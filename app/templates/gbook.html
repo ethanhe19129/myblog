@@ -17,16 +17,7 @@
 	<script src="/static/js/common.js"></script>
 	<script src="/static/js/xcConfirm.js"></script>
 	<script src="/static/js/jquery-1.11.3.js"></script>
-	<script>
-		$(function(){
-			$("#reply").click(function(){
-				var reply = $("<form action=''>" +
-					"<textarea cols='50';rows='30'></textarea>" +
-					"</form>");
-				$(this).parents(".top").siblings(".input_reply").append(reply);
-			})
-		});
-	</script>
+	<script src="/static/js/gbook.js"></script>
 </head>
 
 <body style="position:relative">
@@ -87,40 +78,7 @@
 					<div class="commentstitle">
 						<h3 id="comments">到现在<span class="commentsnumber">有{{params.mess_num}}条留言</span></h3>
 					</div>
-					{% for mess in params.messages %}
-					<ol class="commentlist">
-						<li>
-							<div class="top">
-								<span style="font-weight: bold;color:#3f3f3f" class='url'>{{mess.user.uname}}</span>
-								<span class="time"> @
-									<a href="#" title="">{{mess.pub_date}}</a>
-									<a href="#" class="replyComment">发表</a>
-									<a style="float:right;cursor:default;" id="reply">回复</a>
-								</span>
-							</div>
-							<div class="body">
-								<p>{{mess.content}}</p>
-							</div>
-							<div class="input_reply"></div>
-						</li>
-						{% if mess.reply_messages %}
-							{% for reply in mess.reply_messages %}
-								<li>
-									<div class="reply">
-										<div class="top">
-											<span class="url">{{reply.user.uname}}</span>
-											<span class="time">
-												@ <a href="#" title="">{{reply.pub_date}}</a>
-												<a href="#" class="replyComment">回复</a>
-											</span>
-										</div>
-										<div class="body">{{reply.content}}</div>
-									</div>
-								</li>
-							{% endfor %}
-						{% endif %}
-					</ol>
-					{% endfor %}
+
 					<div id="commentform">
 						<h3 id="respond">在这添加你的留言！</h3>
 						<form action="#" method="post">

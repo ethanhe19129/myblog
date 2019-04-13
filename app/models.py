@@ -77,6 +77,15 @@ class Message(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.ID'))
     reply_messages = db.relationship('ReplyMessage', backref='message', lazy='dynamic')
 
+    def to_dic(self):
+        dic = {
+            "id":self.id,
+            "content":self.content,
+            "pub_date":self.pub_date.__str__(),
+            "user_uname":self.user.uname
+        }
+        return dic
+
 class ReplyMessage(db.Model):
     __tablename__ = 'replymessage'
     id = db.Column(db.Integer, primary_key=True)
@@ -84,6 +93,16 @@ class ReplyMessage(db.Model):
     pub_date = db.Column(db.DateTime, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.ID'))
     message_id = db.Column(db.Integer, db.ForeignKey('message.id'))
+
+    def to_dic(self):
+        dic = {
+            "id":self.id,
+            "content":self.content,
+            "pub_date":self.pub_date.__str__(),
+            "user_uname":self.user.uname,
+            "message_id":self.message_id
+        }
+        return dic
 
 
 

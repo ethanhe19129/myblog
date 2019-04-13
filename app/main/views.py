@@ -282,6 +282,24 @@ def gbook_views():
 def about_views():
     return render_template('about.html')
 
+@main.route("/getmessage")
+def getmessage_views():
+    messages = Message.query.all()
+    list = []
+    for message in messages:
+        list.append(message.to_dic())
+    return json.dumps(list)
+
+@main.route("/getreplymess")
+def getreplymess():
+    mess_id = request.args.get('mess_id')
+    reply_mess = ReplyMessage.query.filter_by(message_id=mess_id).all()
+    list = []
+    for rep in reply_mess:
+        list.append(rep.to_dic())
+    return json.dumps(list)
+
+
 
 
 
