@@ -29,6 +29,8 @@ class User(db.Model):
     is_author = db.Column(db.Boolean, default=False)
     topics = db.relationship('Topic', backref='user', lazy='dynamic')
     replies = db.relationship('Reply', backref='user', lazy='dynamic')
+    messages = db.relationship('Message', backref='user', lazy='dynamic')
+    reply_messages = db.relationship('ReplyMessage', backref='user', lazy='dynamic')
     voke_topics = db.relationship(
         'Topic',
         secondary='voke',
@@ -66,5 +68,22 @@ class Voke(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.ID'))
     topic_id = db.Column(db.Integer, db.ForeignKey('topic.id'))
+
+class Message(db.Model):
+    __tablename__ = "message"
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    pub_date = db.Column(db.DateTime, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.ID'))
+    reply_messages = db.relationship('ReplyMessage', backref='message', lazy='dynamic')
+
+class ReplyMessage(db.Model):
+    __tablename__ = 'replymessage'
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    pub_date = db.Column(db.DateTime, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.ID'))
+    message_id = db.Column(db.Integer, db.ForeignKey('message.id'))
+
 
 

@@ -30,8 +30,10 @@
 
    <div class="pagelist">
        <a title="Total record" href="/photo?page={{params.prePage}}">&nbsp;<b>上一页</b></a>&nbsp;&nbsp;&nbsp;
-    {% for i in range(1,params.lastPage+1) %}
-       <a href="/photo?page={{i}}"><b>{{i}}</b></a>&nbsp;
+    {% for i in range(params.page,params.page+4) %}
+       {% if i <= params.lastPage %}
+            <a href="/photo?page={{i}}"><b>{{i}}</b></a>&nbsp;
+       {% endif %}
     {% endfor %}
        <a href="/photo?page={{params.nextPage}}">下一页</a>&nbsp;
        <a href="/photo?page={{params.lastPage}}">尾页</a>

@@ -222,6 +222,10 @@ def list_views():
 @main.route("/time")
 def time_views():
     categories = Category.query.all()
+    if 'id' in session and 'loginname' in session:
+        id = session['id']
+        user = User.query.filter_by(ID=id).first()
+    topics = Topic.query.order_by(Topic.pub_date.desc()).all()
     return render_template("time.html", params=locals())
 
 @main.route("/photo")
@@ -255,6 +259,30 @@ def photo_views():
     if page < lastPage:
         nextPage = page + 1
     return render_template('photo.html', params=locals())
+
+@main.route("/gbook")
+def gbook_views():
+    categories = Category.query.all()
+    mostlike = db.session.query(Voke.topic_id).group_by('topic_id').order_by(func.count('user_id').desc()).all()
+    liketopics = []
+    for ml in mostlike:
+        liketop = Topic.query.filter_by(id=ml[0]).first()
+        liketopics.append(liketop)
+
+    spec_reco = Topic.query.filter_by(recommend_id=3).order_by(Topic.id.desc()).all()
+    reco = Topic.query.filter_by(recommend_id=2).order_by(Topic.id.desc()).all()
+    mess_num = Message.query.count()
+    messages = Message.query.all()
+    if 'id' in session and 'loginname' in session:
+        id = session['id']
+        user = User.query.filter_by(ID=id).first()
+    return render_template('gbook.html', params=locals())
+
+@main.route("/about")
+def about_views():
+    return render_template('about.html')
+
+
 
 
 
