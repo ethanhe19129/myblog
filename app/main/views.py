@@ -260,44 +260,63 @@ def photo_views():
         nextPage = page + 1
     return render_template('photo.html', params=locals())
 
-@main.route("/gbook")
+@main.route("/gbook", methods=['GET','POST'])
 def gbook_views():
-    categories = Category.query.all()
-    mostlike = db.session.query(Voke.topic_id).group_by('topic_id').order_by(func.count('user_id').desc()).all()
-    liketopics = []
-    for ml in mostlike:
-        liketop = Topic.query.filter_by(id=ml[0]).first()
-        liketopics.append(liketop)
+    if request.method == "GET":
+        categories = Category.query.all()
+        mostlike = db.session.query(Voke.topic_id).group_by('topic_id').order_by(func.count('user_id').desc()).all()
+        liketopics = []
+        for ml in mostlike:
+            liketop = Topic.query.filter_by(id=ml[0]).first()
+            liketopics.append(liketop)
 
-    spec_reco = Topic.query.filter_by(recommend_id=3).order_by(Topic.id.desc()).all()
-    reco = Topic.query.filter_by(recommend_id=2).order_by(Topic.id.desc()).all()
-    mess_num = Message.query.count()
-    messages = Message.query.all()
-    if 'id' in session and 'loginname' in session:
-        id = session['id']
-        user = User.query.filter_by(ID=id).first()
-    return render_template('gbook.html', params=locals())
+        spec_reco = Topic.query.filter_by(recommend_id=3).order_by(Topic.id.desc()).all()
+        reco = Topic.query.filter_by(recommend_id=2).order_by(Topic.id.desc()).all()
+        mess_num = Message.query.count()
+        messages = Message.query.all()
+        if 'id' in session and 'loginname' in session:
+            id = session['id']
+            user = User.query.filter_by(ID=id).first()
+        return render_template('gbook.html', params=locals())
+    else:
+        if request.form['messid']:
+            repmess = ReplyMessage()
+            repmess.message_id = request.form.get('messid')
+            repmess.content = request.form.get('repcontent')
+            repmess.user_id = session['id']
+            repmess.pub_date = datetime.datetime.now()
+            db.session.add(repmess)
+        else:
+            message = Message()
+            message.content = request.form.get('messcontent')
+            message.pub_date = datetime.datetime.now()
+            message.user_id = session['id']
+            db.session.add(message)
+        return redirect("/gbook")
+
+
+
 
 @main.route("/about")
 def about_views():
     return render_template('about.html')
 
-@main.route("/getmessage")
-def getmessage_views():
-    messages = Message.query.all()
-    list = []
-    for message in messages:
-        list.append(message.to_dic())
-    return json.dumps(list)
-
-@main.route("/getreplymess")
-def getreplymess():
-    mess_id = request.args.get('mess_id')
-    reply_mess = ReplyMessage.query.filter_by(message_id=mess_id).all()
-    list = []
-    for rep in reply_mess:
-        list.append(rep.to_dic())
-    return json.dumps(list)
+# @main.route("/getmessage")
+# def getmessage_views():
+#     messages = Message.query.all()
+#     list = []
+#     for message in messages:
+#         list.append(message.to_dic())
+#     return json.dumps(list)
+#
+# @main.route("/getreplymess")
+# def getreplymess():
+#     mess_id = request.args.get('mess_id')
+#     reply_mess = ReplyMessage.query.filter_by(message_id=mess_id).all()
+#     list = []
+#     for rep in reply_mess:
+#         list.append(rep.to_dic())
+#     return json.dumps(list)
 
 
 

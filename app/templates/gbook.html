@@ -17,7 +17,8 @@
 	<script src="/static/js/common.js"></script>
 	<script src="/static/js/xcConfirm.js"></script>
 	<script src="/static/js/jquery-1.11.3.js"></script>
-	<script src="/static/js/gbook.js"></script>
+    <script src="/static/js/reply.js"></script>
+
 </head>
 
 <body style="position:relative">
@@ -78,11 +79,50 @@
 					<div class="commentstitle">
 						<h3 id="comments">到现在<span class="commentsnumber">有{{params.mess_num}}条留言</span></h3>
 					</div>
-
+                    {% for mess in params.messages %}
+					<ol class="commentlist">
+						<li>
+							<div class="top">
+								<span style="font-weight: bold;color:#3f3f3f" class='url'>{{mess.user.uname}}</span>
+								<span class="time"> @
+									<a href="#" title="">{{mess.pub_date}}</a>
+									<a href="#" class="replyComment">发表</a>
+                                    {% if params.user and params.user.ID!=mess.user.ID %}
+									<a style="float:right;cursor:default;text-decoration: none" class="reply">回复</a>
+                                    {% endif %}
+								</span>
+							</div>
+							<div class="body">
+								<p>{{mess.content}}</p>
+							</div>
+							<div class="input_reply"></div>
+                            <input type="hidden" value="{{mess.id}}" class="pass">
+						</li>
+						{% if mess.reply_messages %}
+							{% for reply in mess.reply_messages %}
+								<li>
+									<div class="reply">
+										<div class="top">
+											<span class="url">{{reply.user.uname}}</span>
+											<span class="time">
+												@ <a href="#" title="">{{reply.pub_date}}</a>
+												<a href="#" class="replyComment">回复</a>
+											</span>
+										</div>
+										<div class="body">{{reply.content}}</div>
+									</div>
+								</li>
+							{% endfor %}
+						{% endif %}
+					</ol>
+					{% endfor %}
+                    {% if not params.user %}
+                     <h3 style="float:right;">请先登录再留言>>></h3>
+                    {% elif not params.user.is_author %}
 					<div id="commentform">
 						<h3 id="respond">在这添加你的留言！</h3>
 						<form action="#" method="post">
-						<dir id="editor"></dir>
+                            <textarea name="messcontent" cols="68" rows="10"></textarea>
 						<br>
 						<p>
 							<input id="id_article" name="article" type="hidden" value="1">
@@ -90,6 +130,7 @@
 						</p>
 						</form>
 					</div>
+                    {% endif %}
 				</div>
 			</div>
 			<!-- 右侧 -->
@@ -201,33 +242,6 @@
 	</footer>
 
 	<a href="#" class="cd-top">Top</a>
-	<script>
-		var E = window.wangEditor
-		var editor = new E('#editor')
-		// 或者 var editor = new E( document.getElementById('editor') )
-		editor.customConfig.menus = [
-			'head', // 标题
-			'bold', // 粗体
-			'fontSize', // 字号
-			'fontName', // 字体
-			'italic', // 斜体
-			'underline', // 下划线
-			'strikeThrough', // 删除线
-			'foreColor', // 文字颜色
-			'backColor', // 背景颜色
-			'link', // 插入链接
-			'list', // 列表
-			'justify', // 对齐方式
-			'quote', // 引用
-			'emoticon', // 表情
-			'image', // 插入图片
-			'table', // 表格
-			'video', // 插入视频
-			'undo', // 撤销
-			'redo' // 重复
-		]
-		editor.create()
-	</script>
 
 </body>
 

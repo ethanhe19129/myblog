@@ -10,13 +10,12 @@ $(function () {
                 var html = "";
                 $.each(data,function(i,obj){
                     html += "<ol class='commentlist'>";
-                    html += "<li id='after'><div class='top'><span style='font-weight: bold;color:#3f3f3f' class='url'>"+obj.user_uname+"</span>";
+                    html += "<li><div class='top'><span style='font-weight: bold;color:#3f3f3f' class='url'>"+obj.user_uname+"</span>";
                     html += "<span class='time'> @<a href='#' title=''>"+obj.pub_date+"</a>";
                     html += "<a href='#' class='replyComment'>发表</a>";
                     html += "<a style='float:right;cursor:default;' id='reply'>回复</a></span></div>";
                     html += "<div class='body'><p>"+obj.content+"</p></div>";
                     html += "<div class='input_reply'></div></li></ol>";
-                    html += "<div id='show'></div>"
                     load_replymess(obj.id);
                 });
                 $(".commentstitle").after(html);
@@ -31,7 +30,6 @@ $(function () {
             data:"mess_id="+mess_id,
             type:'get',
             dataType:'json',
-            async:false,
             success:function(data){
                 var html = "";
                 $.each(data,function(i,obj){
@@ -41,7 +39,7 @@ $(function () {
                     html += "<a href='#' class='replyComment'>回复</a></span></div>";
                     html += "<div class='body'>"+obj.content+"</div></div></li>";
                 });
-                $("#message").after(html)
+                $("#message").after(html);
             }
         })
     }
