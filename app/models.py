@@ -51,7 +51,7 @@ class Topic(db.Model):
     images = db.Column(db.Text)
     blogtype_id = db.Column(db.Integer, db.ForeignKey('blogtype.id'))
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.ID'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.ID'), )
     replies = db.relationship('Reply', backref='topic', lazy='dynamic')
     recommend_id = db.Column(db.Integer, db.ForeignKey('recommend.id'))
 

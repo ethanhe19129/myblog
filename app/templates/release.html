@@ -18,6 +18,8 @@
 	<!--[if lt IE 9]>
 	<script src="/static/js/modernizr.js"></script>
 	<![endif]-->
+	<script src="/static/js/jquery-1.11.3.js"></script>
+	<script src="/static/js/release.js"></script>
 </head>
 
 <body>
@@ -75,11 +77,11 @@
 					<input name="list" type="radio" value="2">公开博客
 					<input name="list" type="radio" value="3">其他博客 -->
 					{% for type in params.blogTypes %}
-          <input type="radio" name="list" value="{{type.id}}">{{type.type_name}}
+          <input type="radio" name="list" value="{{type.id}}" required="required">{{type.type_name}}
           {% endfor %}
 				</p>
         <p style="margin:15px 0 0 12px">
-          <select name="category">
+          <select name="category" required="required">
             {% for cate in params.categories %}
             <option value="{{cate.id}}">
               {{cate.cate_name}}
@@ -94,7 +96,7 @@
 				<br>
 
 				<p>
-          <textarea style="margin:15px 0 0 12px" name="content" cols="71" rows="10"></textarea>
+          <textarea style="margin:15px 0 0 12px" name="content" cols="71" rows="10" required="required"></textarea>
         </p>
 				<br>
 				<p>

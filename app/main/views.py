@@ -302,7 +302,44 @@ def about_views():
         user = User.query.filter_by(ID=id).first()
     return render_template('about.html', params=locals())
 
+@main.route('/lognametest')
+def lognametest():
+    loginname = request.args.get('loginname')
+    user = User.query.filter_by(loginname=loginname).first()
+    dic = {}
+    if user:
+        dic['status'] = 0
+        dic['msg'] = '登录名已存在'
+    else:
+        dic['status'] = 1
+        dic['msg'] = '通过'
+    return json.dumps(dic)
 
+@main.route('/unametest')
+def unametest():
+    username = request.args.get('username')
+    user = User.query.filter_by(uname=username).first()
+    dic = {}
+    if user:
+        dic['status'] = 0
+        dic['msg'] = '用户名已存在'
+    else:
+        dic['status'] = 1
+        dic['msg'] = '通过'
+    return json.dumps(dic)
+
+@main.route('/emailtest')
+def emailtest():
+    email = request.args.get('email')
+    user = User.query.filter_by(email=email).first()
+    dic = {}
+    if user:
+        dic['status'] = 0
+        dic['msg'] = '邮箱已注册'
+    else:
+        dic['status'] = 1
+        dic['msg'] = '通过'
+    return json.dumps(dic)
 
 
 
