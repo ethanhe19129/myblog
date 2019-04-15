@@ -118,26 +118,16 @@
 			<div class="tuijian">
 				<h2 class="hometitle">点击排行</h2>
 				<ul class="tjpic">
-					<i><img src="/static/images/toppic01.jpg"></i>
-					<p><a href="#">Python语言在人工智能(AI)中的优势</a></p>
+					<i><img src="/static/{{params.clickmax[0].images}}"></i>
+					<p><a href="/info?id={{params.clickmax[0].id}}">{{params.clickmax[0].title}}</a></p>
 				</ul>
 				<ul class="sidenews">
-					<li> <i><img src="/static/images/toppic01.jpg"></i>
-						<p><a href="#">精通Python编程——Python深入浅出教程</a></p>
-						<span>2018-05-13</span>
+					{% for cm in params.clickmax[1:] %}
+					<li> <i><img src="/static/{{cm.images}}"></i>
+						<p><a href="{{cm.id}}">{{cm.title}}</a></p>
+						<span>{{cm.pub_date.strftime("%Y-%m-%d")}}</span>
 					</li>
-					<li> <i><img src="/static/images/toppic02.jpg"></i>
-						<p><a href="#">人生苦短 Python当歌</a></p>
-						<span>2018-05-13</span>
-					</li>
-					<li> <i><img src="/static/images/v1.jpg"></i>
-						<p><a href="#">Python学习笔记：虚拟环境和包</a></p>
-						<span>2018-05-13</span>
-					</li>
-					<li> <i><img src="/static/images/v2.jpg"></i>
-						<p><a href="#">python中打开TXT文件报错</a></p>
-						<span>2018-05-13</span>
-					</li>
+					{% endfor %}
 				</ul>
 			</div>
 		</div>

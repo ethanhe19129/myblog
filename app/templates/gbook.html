@@ -138,102 +138,94 @@
       <div class="zhuanti">
         <h2 class="hometitle">特别推荐</h2>
         <ul>
-          <li> <i><img src="/static/images/banner03.jpg"></i>
-            <p>
-              {% if params.spec_reco %}
-                {{params.spec_reco[0].title}}
-              {% else %}
-                无特别推荐
-              {% endif %}
-              <span><a href="/info?id={{params.spec_reco.id}}">阅读</a></span>
-            </p>
-          </li>
-         <li> <i><img src="/static/images/b04.jpg"></i>
-            <p>
-              {% if params.spec_reco[1] %}
-                {{params.spec_reco[1].title}}
-              {% else %}
-                无特别推荐
-              {% endif %}
-              <span><a href="/info?id={{params.spec_reco.id}}">阅读</a></span>
-            </p>
-          </li>
-          <li> <i><img src="/static/images/b05.jpg"></i>
-            <p>
-              {% if params.spec_reco[2] %}
-                {{params.spec_reco[2].title}}
-              {% else %}
-                无特别推荐
-              {% endif %}
-              <span><a href="/info?id={{params.spec_reco.id}}">阅读</a></span>
-            </p>
-          </li>
+          {% if params.spec_reco %}
+            {% for spco in params.spec_reco %}
+              <li> <i><img src="/static/{{spco.images}}"></i>
+                <p>{{spco.title}}<span><a href="/info?id={{spco.id}}">阅读</a></span></p>
+              </li>
+            {% endfor %}
+          {% else %}
+              <li> <i><img src="/static/images/banner03.jpg"></i>
+                <p><span><a href="#">暂无推荐</a></span></p>
+              </li>
+          {% endif %}
         </ul>
       </div>
       <div class="tuijian">
         <h2 class="hometitle">推荐文章</h2>
+        {% if not params.reco %}
+            <ul class="tjpic">
+              <i><img src="/static/images/toppic01.jpg"></i>
+              <p>
+                  <a href="#">无推荐文章</a>
+              </p>
+            </ul>
+        {% else %}
         <ul class="tjpic">
-          <i><img src="/static/images/toppic01.jpg"></i>
-          <p>
-            {% if params.reco %}
-              <a href="/info?id={{params.reco[0].id}}">{{params.reco[0].title}}</a></p>
-            {% else %}
-              <a href="#">无推荐文章</a>
-            {% endif %}
+              <i><img src="/static/{{params.reco[0].images}}"></i>
+              <p>
+                  <a href="/info?id={{params.reco[0].id}}">{{params.reco[0].title}}</a></p>
         </ul>
         <ul class="sidenews">
-          <li> <i><img src="/static/images/toppic01.jpg"></i>
+        {% for re in params.reco[1:] %}
+          <li> <i><img src="/static/{{re.images}}"></i>
             <p>
-              {% if params.reco[1] %}
-                <a href="/info?id={{params.reco[1].id}}">{{params.reco[1].title}}</a>
-                <span>{{params.reco[1].pub_date.strftime("%Y-%m-%d")}}</span>
-              {% else %}
-                <a href="#">无推荐文章</a>
-              {% endif %}
+                <a href="/info?id={{re.id}}">{{re.title}}</a>
+                <span>{{re.pub_date.strftime("%Y-%m-%d")}}</span>
             </p>
           </li>
-          <li> <i><img src="/static/images/toppic02.jpg"></i>
-            <p>
-              {% if params.reco[2] %}
-                <a href="/info?id={{params.reco[2].id}}">{{params.reco[2].title}}</a>
-                <span>{{params.reco[2].pub_date.strftime("%Y-%m-%d")}}</span>
-              {% else %}
-                <a href="#">无推荐文章</a>
-              {% endif %}
-            </p>
-          </li>
-          <li> <i><img src="/static/images/v1.jpg"></i>
-            <p>
-              {% if params.reco[3] %}
-                <a href="/info?id={{params.reco[3].id}}">{{params.reco[3].title}}</a>
-                <span>{{params.reco[3].pub_date.strftime("%Y-%m-%d")}}</span>
-              {% else %}
-                <a href="#">无推荐文章</a>
-              {% endif %}
-            </p>
-          </li>
-          <li> <i><img src="/static/images/v2.jpg"></i>
-            <p>
-              {% if params.reco[4] %}
-                <a href="/info?id={{params.reco[4].id}}">{{params.reco[4].title}}</a>
-                <span>{{params.reco[4].pub_date.strftime("%Y-%m-%d")}}</span>
-              {% else %}
-                <a href="#">无推荐文章</a>
-              {% endif %}
-            </p>
-          </li>
+        {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+      <div class="tuijian">
+        <h2 class="hometitle">干货好文</h2>
+        {% if not params.liketopics %}
+          <ul class="tjpic">
+            <i><img src="/static/images/banner04.jpg" alt=""></i>
+            <p><a href="#">暂无文章</a></p>
+          </ul>
+        {% else %}
+          <ul class="tjpic">
+            <i><img src="/static/{{params.liketopics[0].images}}" alt=""></i>
+            <p><a href="/info?id={{params.liketopics[0].id}}">{{params.liketopics[0].title}}</a></p>
+          </ul>
+          <ul class="sidenews">
+            {% for like in params.liketopics[1:] %}
+              <li><i><img src="/static/{{like.images}}" alt=""></i>
+                  <p><a href="/info?id={{like.id}}">{{like.title}}</a></p>
+                {% if params.liketopics[1:0] %}
+                <span>{{like.pub_date.strftime("%Y-%m-%d")}}</span>
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+      <div class="links">
+        <h2 class="hometitle">友情链接</h2>
+        <ul>
+          <li><a href="#" target="_blank" style="color:#2816C6;text-decoration: underline">python社区</a></li>
+          <li><a href="#" target="_blank" style="color:#2816C6;text-decoration: underline">Microsoft微软中国</a></li>
+          <li><a href="#" target="_blank" style="color:#2816C6;text-decoration: underline">极客世界</a></li>
+          <li><a href="#" target="_blank" style="color:#2816C6;text-decoration: underline">CSDN</a></li>
+          <li><a href="#" target="_blank" style="color:#2816C6;text-decoration: underline">慕课网</a></li>
+          <li><a href="#" target="_blank" style="color:#2816C6;text-decoration: underline">IBM</a></li>
+          <li><a href="#" target="_blank" style="color:#2816C6;text-decoration: underline">万维网中国</a></li>
+          <li><a href="#" target="_blank" style="color:#2816C6;text-decoration: underline">百度</a></li>
+          <li><a href="#" target="_blank" style="color:#2816C6;text-decoration: underline">英特尔</a></li>
+          <li><a href="#" target="_blank" style="color:#2816C6;text-decoration: underline">华为</a></li>
+          <li><a href="#" target="_blank" style="color:#2816C6;text-decoration: underline">APPLE</a></li>
+          <li><a href="#" target="_blank" style="color:#2816C6;text-decoration: underline">阿里巴巴</a></li>
+          <li><a href="#" target="_blank" style="color:#2816C6;text-decoration: underline">携程</a></li>
+          <li><a href="#" target="_blank" style="color:#2816C6;text-decoration: underline">腾讯</a></li>
+          <li><a href="#" target="_blank" style="color:#2816C6;text-decoration: underline">w3cschool</a></li>
+          <li><a href="#" target="_blank" style="color:#2816C6;text-decoration: underline">Bilibili</a></li>
+          <li><a href="#" target="_blank" style="color:#2816C6;text-decoration: underline">爱奇艺</a></li>
+          <li><a href="#" target="_blank" style="color:#2816C6;text-decoration: underline">站长之家</a></li>
         </ul>
       </div>
-
-				<div class="links">
-					<h2 class="hometitle">友情链接</h2>
-					<ul>
-					  <li><a href="#" target="_blank">python社区</a></li>
-					  <li><a href="#" target="_blank">Microsoft微软中国</a></li>
-					  <li><a href="#" target="_blank">极客世界</a></li>
-					</ul>
-      			</div>
-			</div>
+    </div>
 		</div>
 	</article>
 

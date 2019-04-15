@@ -45,6 +45,7 @@ def release_views():
             # 将id从session中获取出来再查询用户
             id = session['id']
             user = User.query.filter_by(ID=id).first()
+            clickmax = Topic.query.order_by(Topic.read_num.desc()).limit(5).all()
             if user.is_author:
                 # 1.查询Category的所有的信息
                 categories = Category.query.all()
