@@ -66,7 +66,7 @@
     <div class="picsbox">
       <div class="banner">
         <div id="banner" class="fader">
-          {% for topic in params.topics[0:3] %}
+          {% for topic in params.topics[-3:] %}
           <li class="slide">
             <a href="/info?id={{topic.id}}" target="_blank">
               <img src="/static/{{topic.images}}">
@@ -86,7 +86,7 @@
       </div>
       <!--banner end-->
       <div class="toppic">
-        {% if not params.topics[3:5] %}
+        {% if not params.topics[-5:-3] %}
         <li>
           <a href="#" target="_blank">
             <i><img src="/static/images/404.jpg" alt=""></i>
