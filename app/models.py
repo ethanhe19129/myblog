@@ -18,6 +18,13 @@ class Recommend(db.Model):
     reco_type = db.Column(db.String(20), nullable=False)
     topics = db.relationship('Topic', backref='recommend', lazy='dynamic')
 
+    def to_dic(self):
+        dic = {
+            "id":self.id,
+            "reco_type":self.reco_type,
+        }
+        return dic
+
 class User(db.Model):
     __tablename__ = "user"
     ID = db.Column(db.Integer, primary_key=True)
