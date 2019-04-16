@@ -78,7 +78,10 @@ def release_views():
         # 从session中获取id为Topic.user_id赋值
         topic.user_id = session['id']
         # 获取是否推荐(recommend)为Topic.recommend_id赋值
-        topic.recommend_id = request.form['recommend']
+        if not request.form['recommend']:
+            topic.recommend_id = 1
+        else:
+            topic.recommend_id = request.form['recommend']
 
         # 获取系统时间为Topic.pub_date赋值
         topic.pub_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
