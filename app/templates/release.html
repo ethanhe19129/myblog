@@ -118,8 +118,13 @@
 			<div class="tuijian">
 				<h2 class="hometitle">点击排行</h2>
 				<ul class="tjpic">
+					{% if params.clickmax[0] %}
 					<i><img src="/static/{{params.clickmax[0].images}}"></i>
 					<p><a href="/info?id={{params.clickmax[0].id}}">{{params.clickmax[0].title}}</a></p>
+					{% else %}
+					<i><img src="/static/images/pic04.jpg"></i>
+					<p><a href="#">暂无文章</a></p>
+					{% endif %}
 				</ul>
 				<ul class="sidenews">
 					{% for cm in params.clickmax[1:] %}

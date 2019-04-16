@@ -82,7 +82,7 @@
 				<p class="diggit">
 					<a href="/info?id={{params.topic.id}}&like=1">
 						很赞哦！ 
-					</a>(<b id="diggnum">{{params.likes}}</b>)
+					</a>(<b id="diggnum">{{params.voke_num}}</b>)
 				</p>
 				<p class="dasbox"><a href="#" class="dashang" title="打赏，支持一下">打赏本站</a></p>
 				<div class="hide_box"></div>
@@ -148,7 +148,7 @@
 							{% endif %}
 
 
-							{% if params.user %}
+							{% if params.user and params.user.ID!=1 %}
 							<div id="commentform">
 								<h3 id="respond">在这添加你的评论！</h3>
 								<form action="/info" method="post">
@@ -161,9 +161,11 @@
 									</p>
 								</form>
 							</div>
-							{% else%}
-								<a href="/login">登录后才可以发表评论 >>></a>
+							{% elif params.user and params.user.ID==1 %}
+							{% else %}
+								<h4>请先登录再发表评论</h4>
 							{% endif %}
+
 						</div>
 
 					</div>
@@ -181,7 +183,7 @@
               </li>
             {% endfor %}
           {% else %}
-              <li> <i><img src="/static/images/banner03.jpg"></i>
+              <li> <i><img src="/static/images/404.jpg"></i>
                 <p><span><a href="#">暂无推荐</a></span></p>
               </li>
           {% endif %}
@@ -191,7 +193,7 @@
         <h2 class="hometitle">推荐文章</h2>
         {% if not params.reco %}
             <ul class="tjpic">
-              <i><img src="/static/images/toppic01.jpg"></i>
+              <i><img src="/static/images/404.jpg"></i>
               <p>
                   <a href="#">无推荐文章</a>
               </p>
@@ -218,7 +220,7 @@
         <h2 class="hometitle">干货好文</h2>
         {% if not params.liketopics %}
           <ul class="tjpic">
-            <i><img src="/static/images/banner04.jpg" alt=""></i>
+            <i><img src="/static/images/404.jpg" alt=""></i>
             <p><a href="#">暂无文章</a></p>
           </ul>
         {% else %}

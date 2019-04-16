@@ -178,17 +178,16 @@ def info_views():
         prevTopic = Topic.query.filter(Topic.id<id).order_by(Topic.id.desc()).first()
         # 显示后一页博客
         nextTopic = Topic.query.filter(Topic.id>id).first()
-        #判断是否登录
-        if 'id' in session and 'loginname' in session:
-            user = User.query.filter_by(ID=session['id']).first()
-        #点赞请求
         if request.args.get('like'):
             voke = Voke()
             voke.topic_id = id
             voke.user_id = session['id']
             db.session.add(voke)
             db.session.commit()
-        likes = Voke.query.filter_by(topic_id=id).count()
+        voke_num = Voke.query.filter_by(topic_id=id).count()
+        # 判断是否登录
+        if 'id' in session and 'loginname' in session:
+            user = User.query.filter_by(ID=session['id']).first()
         return render_template("info.html", params=locals())
     else:
         # 增加评论
@@ -361,6 +360,9 @@ def emailtest():
         dic['status'] = 1
         dic['msg'] = '通过'
     return json.dumps(dic)
+
+
+
 
 
 
