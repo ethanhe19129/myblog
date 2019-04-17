@@ -166,7 +166,8 @@ def info_views():
         liketopics = []
         for ml in mostlike:
             liketop = Topic.query.filter_by(id=ml[0], category_id=topic.category_id).first()
-            liketopics.append(liketop)
+            if liketop:
+                liketopics.append(liketop)
         #特别推荐博客
         spec_reco = Topic.query.filter_by(recommend_id=3,category_id=topic.category_id).order_by(Topic.id.desc()).all()
         #推荐博客
@@ -222,8 +223,9 @@ def list_views():
         #list打包封装较高点赞博客
         for ml in mostlike:
             liketop = Topic.query.filter_by(id=ml[0], category_id=cate_id).first()
-            liketopics.append(liketop)
-        spec_reco = Topic.query.filter_by(recommend_id=3,category_id=cate_id).order_by(Topic.id.desc()).all()
+            if liketop:
+                liketopics.append(liketop)
+        spec_reco = Topic.query.filter_by(recommend_id=3,category_id=cate_id).order_by(Topic.id.desc()).limit(3).all()
         reco = Topic.query.filter_by(recommend_id=2,category_id=cate_id).order_by(Topic.id.desc()).all()
     #如果直接文章列表进入则不分类
     else:
@@ -234,7 +236,7 @@ def list_views():
         for ml in mostlike:
             liketop = Topic.query.filter_by(id=ml[0]).first()
             liketopics.append(liketop)
-        spec_reco = Topic.query.filter_by(recommend_id=3).order_by(Topic.id.desc()).all()
+        spec_reco = Topic.query.filter_by(recommend_id=3).order_by(Topic.id.desc()).limit(3).all()
         reco = Topic.query.filter_by(recommend_id=2).order_by(Topic.id.desc()).all()
 
     return render_template('list.html', params=locals())

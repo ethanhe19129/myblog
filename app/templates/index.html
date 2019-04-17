@@ -212,30 +212,38 @@
           </ul>
         {% endif %}
       </div>
+
+
+
       <div class="tuijian">
         <h2 class="hometitle">干货好文</h2>
         {% if not params.liketopics %}
-          <ul class="tjpic">
-            <i><img src="/static/images/404.jpg" alt=""></i>
-            <p><a href="#">暂无文章</a></p>
-          </ul>
+            <ul class="tjpic">
+              <i><img src="/static/images/404.jpg" alt=""></i>
+              <p><a href="#">暂无文章</a></p>
+            </ul>
         {% else %}
-          <ul class="tjpic">
-            <i><img src="/static/{{params.liketopics[0].images}}" alt=""></i>
-            <p><a href="/info?id={{params.liketopics[0].id}}">{{params.liketopics[0].title}}</a></p>
-          </ul>
-          <ul class="sidenews">
-            {% for like in params.liketopics[1:] %}
-              <li><i><img src="/static/{{like.images}}" alt=""></i>
-                  <p><a href="/info?id={{like.id}}">{{like.title}}</a></p>
-                {% if params.liketopics[1:0] %}
-                <span>{{like.pub_date.strftime("%Y-%m-%d")}}</span>
-                {% endif %}
-              </li>
-            {% endfor %}
-          </ul>
+           {% for lt in params.liketopics %}
+              {% if loop.index == 1 %}
+                <ul class="tjpic">
+                  <i><img src="/static/{{lt.images}}" alt=""></i>
+                  <p><a href="/info?id={{lt.id}}">{{lt.title}}</a></p>
+                </ul>
+              {% else%}
+                <ul class="sidenews">
+                    <li><i><img src="/static/{{lt.images}}" alt=""></i>
+                        <p><a href="/info?id={{lt.id}}">{{lt.title}}</a></p>
+                      <span>{{lt.pub_date.strftime("%Y-%m-%d")}}</span>
+                    </li>
+                </ul>
+              {% endif %}
+           {% endfor %}
         {% endif %}
       </div>
+
+
+
+
       <div class="links">
         <h2 class="hometitle">友情链接</h2>
         <ul>
