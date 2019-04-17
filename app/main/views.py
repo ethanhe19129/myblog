@@ -26,7 +26,7 @@ def index_views():
         liketop = Topic.query.filter_by(id=ml[0]).first()
         liketopics.append(liketop)
 
-    spec_reco = Topic.query.filter_by(recommend_id=3).order_by(Topic.id.desc()).all()
+    spec_reco = Topic.query.filter_by(recommend_id=3).order_by(Topic.id.desc()).limit(3).all()
     reco = Topic.query.filter_by(recommend_id=2).order_by(Topic.id.desc()).all()
     id = None
     if 'id' in session and 'loginname' in session:
@@ -292,7 +292,7 @@ def gbook_views():
             liketop = Topic.query.filter_by(id=ml[0]).first()
             liketopics.append(liketop)
 
-        spec_reco = Topic.query.filter_by(recommend_id=3).order_by(Topic.id.desc()).all()
+        spec_reco = Topic.query.filter_by(recommend_id=3).order_by(Topic.id.desc()).limit(3).all()
         reco = Topic.query.filter_by(recommend_id=2).order_by(Topic.id.desc()).all()
         mess_num = Message.query.count()
         messages = Message.query.all()
@@ -362,6 +362,7 @@ def emailtest():
         dic['status'] = 1
         dic['msg'] = '通过'
     return json.dumps(dic)
+
 
 
 
