@@ -143,9 +143,7 @@ def logout_views():
     if 'id' in session or 'loginname' in session:
         del session['id']
         del session['loginname']
-    if request.headers['referer']:
-        return redirect(request.headers['referer'])
-    return redirect('/')
+        return redirect('/')
 
 @main.route("/info", methods=['GET', 'POST'])
 def info_views():
