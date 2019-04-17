@@ -17,25 +17,26 @@ import datetime
 @main.route("/")
 @main.route("/index")
 def index_views():
-    # 读取Category中的所有内容并发送到index.html显示
     categories = Category.query.all()
-    # 判断是否有登录的用户(判断session中是否有id和loginname)
-    mostlike = db.session.query(Voke.topic_id).group_by('topic_id').order_by(func.count('user_id').desc()).all()
-    liketopics = []
-    for ml in mostlike:
-        liketop = Topic.query.filter_by(id=ml[0]).first()
-        liketopics.append(liketop)
-
     spec_reco = Topic.query.filter_by(recommend_id=3).order_by(Topic.id.desc()).limit(3).all()
     reco = Topic.query.filter_by(recommend_id=2).order_by(Topic.id.desc()).all()
+    mostlike = db.session.query(Voke.topic_id).group_by('topic_id').order_by(func.count('user_id').desc()).all()
+    liketopics = []
     id = None
     if 'id' in session and 'loginname' in session:
         id = session['id']
         user = User.query.filter_by(ID=id).first()
     if id == 1:
         topics = Topic.query.all()
+        for ml in mostlike:
+            liketop = Topic.query.filter_by(id=ml[0]).first()
+            liketopics.append(liketop)
     else:
         topics = Topic.query.filter(Topic.blogtype_id!=1).all()
+        for ml in mostlike:
+            liketop = db.session.query(Topic).filter(Topic.id==ml[0],Topic.blogtype_id!=1).first()
+            if liketop:
+                liketopics.append(liketop)
     return render_template("index.html",params = locals())
 
 @main.route("/getSel")
@@ -148,24 +149,15 @@ def logout_views():
 @main.route("/info", methods=['GET', 'POST'])
 def info_views():
     if request.method == "GET":
-        #查询技术种类
         categories = Category.query.all()
         id = request.args.get('id')
-        # 获取当前主题
         topic = Topic.query.filter_by(id=id).first()
-        #获取所有技术种类下的主题
-        topics = Topic.query.filter_by(category_id=topic.category_id).all()
         try:
             replies = Reply.query.filter_by(topic_id=id).order_by(Reply.id.desc()).all()
         except AttributeError:
             replies = None
-        #获取点赞量高的topid
         mostlike = db.session.query(Voke.topic_id).group_by('topic_id').order_by(func.count('user_id').desc()).all()
         liketopics = []
-        for ml in mostlike:
-            liketop = Topic.query.filter_by(id=ml[0], category_id=topic.category_id).first()
-            if liketop:
-                liketopics.append(liketop)
         #特别推荐博客
         spec_reco = Topic.query.filter_by(recommend_id=3,category_id=topic.category_id).order_by(Topic.id.desc()).all()
         #推荐博客
@@ -173,10 +165,6 @@ def info_views():
         #打开页面增加一次阅读量
         topic.read_num += 1
         db.session.add(topic)
-        #显示前一页博客
-        prevTopic = Topic.query.filter(Topic.id<id).order_by(Topic.id.desc()).first()
-        # 显示后一页博客
-        nextTopic = Topic.query.filter(Topic.id>id).first()
         if request.args.get('like'):
             voke = Voke()
             voke.topic_id = id
@@ -185,8 +173,26 @@ def info_views():
             db.session.commit()
         voke_num = Voke.query.filter_by(topic_id=id).count()
         # 判断是否登录
+        uid = None
         if 'id' in session and 'loginname' in session:
             user = User.query.filter_by(ID=session['id']).first()
+            uid = session['id']
+        if uid == 1:
+            topics = Topic.query.filter_by(category_id=topic.category_id).all()
+            for ml in mostlike:
+                liketop = Topic.query.filter_by(id=ml[0], category_id=topic.category_id).first()
+                if liketop:
+                    liketopics.append(liketop)
+            prevTopic = Topic.query.filter(Topic.id < id).order_by(Topic.id.desc()).first()
+            nextTopic = Topic.query.filter(Topic.id > id).first()
+        else:
+            topics = Topic.query.filter(Topic.category_id==topic.category_id, Topic.blogtype_id!=1).all()
+            for ml in mostlike:
+                liketop = Topic.query.filter(Topic.id==ml[0],Topic.category_id==topic.category_id,Topic.blogtype_id!=1).first()
+                if liketop:
+                    liketopics.append(liketop)
+            prevTopic = Topic.query.filter(Topic.id < id, Topic.blogtype_id!=1).order_by(Topic.id.desc()).first()
+            nextTopic = Topic.query.filter(Topic.id > id, Topic.blogtype_id!=1).first()
         return render_template("info.html", params=locals())
     else:
         # 增加评论
@@ -203,37 +209,47 @@ def info_views():
 @main.route("/list")
 def list_views():
     categories = Category.query.all()
-    #获取点赞较多的博客id倒序排列
+
+
     mostlike = db.session.query(Voke.topic_id).group_by('topic_id').order_by(func.count('user_id').desc()).all()
     liketopics = []
+
 
     id = None
     if 'id' in session and 'loginname' in session:
         id = session['id']
         user = User.query.filter_by(ID=id).first()
+
     #如果是分类点击进入则分类别显示
     if request.args.get('id'):
         cate_id = request.args.get('id')
         if id == 1:
             topics = Topic.query.filter_by(category_id=cate_id).all()
+            for ml in mostlike:
+                liketop = Topic.query.filter_by(id=ml[0], category_id=cate_id).first()
+                if liketop:
+                    liketopics.append(liketop)
         else:
             topics = db.session.query(Topic).filter(Topic.category_id==cate_id,Topic.blogtype_id!=1).all()
-        #list打包封装较高点赞博客
-        for ml in mostlike:
-            liketop = Topic.query.filter_by(id=ml[0], category_id=cate_id).first()
-            if liketop:
-                liketopics.append(liketop)
+            for ml in mostlike:
+                liketop = db.session.query(Topic).filter(Topic.id==ml[0],Topic.category_id==cate_id,Topic.blogtype_id!=1).first()
+                if liketop:
+                    liketopics.append(liketop)
         spec_reco = Topic.query.filter_by(recommend_id=3,category_id=cate_id).order_by(Topic.id.desc()).limit(3).all()
         reco = Topic.query.filter_by(recommend_id=2,category_id=cate_id).order_by(Topic.id.desc()).all()
     #如果直接文章列表进入则不分类
     else:
         if id == 1:
             topics= Topic.query.all()
+            for ml in mostlike:
+                liketop = Topic.query.filter_by(id=ml[0]).first()
+                liketopics.append(liketop)
         else:
             topics = Topic.query.filter(Topic.blogtype_id != 1).all()
-        for ml in mostlike:
-            liketop = Topic.query.filter_by(id=ml[0]).first()
-            liketopics.append(liketop)
+            for ml in mostlike:
+                liketop = db.session.query(Topic).filter(Topic.id==ml[0],Topic.blogtype_id!=1).first()
+                if liketop:
+                    liketopics.append(liketop)
         spec_reco = Topic.query.filter_by(recommend_id=3).order_by(Topic.id.desc()).limit(3).all()
         reco = Topic.query.filter_by(recommend_id=2).order_by(Topic.id.desc()).all()
 
@@ -242,10 +258,14 @@ def list_views():
 @main.route("/time")
 def time_views():
     categories = Category.query.all()
+    id = None
     if 'id' in session and 'loginname' in session:
         id = session['id']
         user = User.query.filter_by(ID=id).first()
-    topics = Topic.query.order_by(Topic.pub_date.desc()).all()
+    if id == 1:
+        topics = Topic.query.order_by(Topic.pub_date.desc()).all()
+    else:
+        topics = db.session.query(Topic).filter(Topic.blogtype_id!=1).order_by(Topic.pub_date.desc()).all()
     return render_template("time.html", params=locals())
 
 @main.route("/photo")
@@ -253,6 +273,7 @@ def photo_views():
     # 读取Category中的所有内容并发送到index.html显示
     categories = Category.query.all()
     # 判断是否有登录的用户(判断session中是否有id和loginname)
+    id = None
     if 'id' in session and 'loginname' in session:
         id = session['id']
         user = User.query.filter_by(ID=id).first()
@@ -263,8 +284,10 @@ def photo_views():
     page = int(request.args.get('page', 1))
     #偏移量
     ost = (page - 1) * pageSize
-    #当前页所要展示的主题,过滤掉不带图的
-    topics = db.session.query(Topic).filter(Topic.images!=None).offset(ost).limit(pageSize).all()
+    if id == 1:
+        topics = db.session.query(Topic).filter(Topic.images!=None).offset(ost).limit(pageSize).all()
+    else:
+        topics = db.session.query(Topic).filter(Topic.images != None, Topic.blogtype_id!=1).offset(ost).limit(pageSize).all()
     #获取要展示博客总数
     totalCount = db.session.query(Topic).filter(Topic.images!=None).count()
     #获取最后一页的页数
@@ -284,7 +307,7 @@ def photo_views():
 def gbook_views():
     if request.method == "GET":
         categories = Category.query.all()
-        mostlike = db.session.query(Voke.topic_id).group_by('topic_id').order_by(func.count('user_id').desc()).all()
+        mostlike = db.session.query(Voke.topic_id).group_by('topic_id').order_by(func.count('user_id').desc()).limit(5).all()
         liketopics = []
         for ml in mostlike:
             liketop = Topic.query.filter_by(id=ml[0]).first()
@@ -299,7 +322,7 @@ def gbook_views():
             user = User.query.filter_by(ID=id).first()
         return render_template('gbook.html', params=locals())
     else:
-        if request.form['messid']:
+        if request.form.get('messid'):
             repmess = ReplyMessage()
             repmess.message_id = request.form.get('messid')
             repmess.content = request.form.get('repcontent')
